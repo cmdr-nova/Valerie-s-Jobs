@@ -27,6 +27,13 @@ class InterviewTuningTests(unittest.TestCase):
             self.assertEqual(minimum.text, minutes)
             self.assertEqual(maximum.text, minutes)
 
+    def test_interviews_use_safe_time_based_content(self):
+        for path in TUNING.glob("ValeriesJobs_JobInterview_*.xml"):
+            root = ET.parse(path).getroot()
+            self.assertIsNotNone(root.find(".//V[@t='time_based']"))
+            self.assertIsNone(root.find(".//U[@n='animation_ref']"))
+            self.assertIsNone(root.find(".//V[@t='posture']"))
+
     def test_rabbit_holes_have_an_away_action(self):
         for path in TUNING.glob("*RabbitHole*.xml"):
             root = ET.parse(path).getroot()

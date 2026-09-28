@@ -34,3 +34,9 @@ In-game result: passed. The user confirmed that career interception, the intervi
 - Replaced transient notifications with modal OK dialogs
 - Kept a timed fallback if the tuning package cannot be loaded
 - In-game result: pending
+
+### Failed `0.2.0-dev` test
+
+The game produced two tuning-load exceptions (`'str' object has no attribute 'factory'`) for the interview interactions, followed by a transition exception (`'tuple' object has no attribute 'get'`). The queued interview consequently canceled instead of entering the rabbit hole. The causes were inherited animation-factory and posture-constraint structures that were invalid in the custom tuning context.
+
+Version `0.2.1-dev` removes both structures and follows EA's simpler time-based rabbit-hole interaction schema. Regression tests now reject either structure if it is reintroduced.
