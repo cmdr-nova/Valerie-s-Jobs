@@ -1,54 +1,48 @@
+![Valerie's Jobs promotional banner](assets/valeries-jobs-banner-v1.png)
+
 # Valerie's Jobs
 
-Valerie's Jobs is a scripted gameplay mod for The Sims 4 that turns joining a career into an application and interview process. Relevant skills influence the outcome, while some employers post deliberately fake “ghost jobs.”
+Valerie's Jobs is a scripted gameplay mod for The Sims 4 that turns choosing a career into an actual hiring process.
 
-Status: timed career interview, rabbit-hole presentation, and hiring flow verified in game on version `1.128.90.1030`; arrival-timed dialog revision awaiting verification.
+Instead of joining immediately, your Sim travels to a one- or two-hour off-screen interview. Their relevant skills influence the result, beginner Sims still receive a fair chance, and a successful interview places them directly into the career. Occasionally, an employer may post a “ghost job” that was never genuinely available.
 
-## Current prototype
+## Current features
 
-The script archive provides these live development commands:
+- Skill-based interviews for supported full-time and part-time careers
+- One- or two-hour rabbit-hole interviews
+- Modal acceptance and rejection results with feedback
+- Easier expectations for entry-level and part-time applicants
+- A small chance of encountering a fake job listing
+- Automatic career assignment after a successful interview
+- The Noble career, freelance work, schools, retirement, and unsupported custom careers safely bypass the interview system
 
-- `vj.hello` confirms that the mod loaded.
-- `vj.test_apply <charisma> <primary_skill>` exercises the standalone scoring engine with supplied skill levels from 0 through 10.
-- `vj.complete_interview` immediately completes the active Sim's pending interview for testing.
+## Installation
 
-Normal player-confirmed career selections are intercepted for mapped standard careers, active professions, and part-time jobs. Valerie's Jobs reads the Sim's real relevant skills, sends the Sim into a one- or two-Sim-hour off-screen rabbit hole, waits until the Sim reaches the lot exit before announcing that the interview has started, shows modal result dialogs with feedback, and invokes EA's original career join routine after an acceptance. Part-time jobs use an easier baseline. Noble, freelance/gig-style, and unknown careers fail open to EA's normal behavior.
+1. Download the newest ZIP from the **Releases** page.
+2. Extract `ValeriesJobs.package` and `ValeriesJobs.ts4script` into `Documents/Electronic Arts/The Sims 4/Mods/ValeriesJobs`.
+3. Enable **Custom Content and Mods** and **Script Mods Allowed** in the game's options.
+4. Restart The Sims 4.
 
-Save/reload persistence for pending application metadata remains a future milestone. Use a disposable save while verifying this development build.
+Do not place the script more than one folder beneath `Mods`.
 
-The first in-game test confirmed the script loader without a `lastException`; later tests confirmed career interception, skill-based timing/outcomes, native career assignment, routing, hiding, and modal dialogs. The arrival-timed start dialog is the current test target. See `docs/test-results.md`.
+## Development status
 
-## Requirements
+The current `0.2.3-dev` build is an early testing release for The Sims 4 version `1.128.90.1030`. The main interview flow, rabbit-hole presentation, outcome dialogs, and career assignment have passed in-game testing. Save/reload persistence for an interview already in progress is not implemented yet, so use a disposable save while testing.
 
-- The Sims 4 with script mods enabled
-- Docker for the reproducible Python 3.7 compiler
-- Node.js and `npm install` for the tuning-package builder
-- Python 3.10 or newer for repository tooling and tests
-- Git
+Please report bugs through GitHub Issues and include your game version, mod version, what your Sim was doing, and any `lastException` file.
 
-The game embeds Python 3.7. The project therefore compiles script bytecode in a pinned Python 3.7 container rather than using the host Python.
+## Building from source
 
-## Commands
+The game embeds Python 3.7. This project uses Docker for reproducible Python 3.7 bytecode, Node.js for the tuning package, and host-side Python tests.
 
 ```bash
+npm install
 make test
 make build
-make check-update
-make extract-references
-make deploy
 ```
 
-`make deploy` copies only Valerie's Jobs artifacts into the configured `Mods/ValeriesJobs` folder. It does not alter saves or unrelated mods.
+Extracted EA code and game resources are used only as local compatibility references. They are excluded from the repository and are not redistributed.
 
-## Repository layout
+## Disclaimer
 
-- `src/valeries_jobs/` — game script and dependency-free domain logic
-- `tools/` — build, deployment, reference extraction, and patch auditing
-- `tests/` — host-side unit tests
-- `compatibility/` — supported-version declaration and update snapshots
-- `docs/` — development and compatibility documentation
-- `dist/` — generated release artifacts; ignored by Git
-
-## Copyright boundary
-
-Extracted EA Python bytecode and game resources are placed under `.cache/`, ignored by Git, and must not be redistributed. Compatibility snapshots contain hashes and filenames only.
+This is an unofficial fan-made mod and is not affiliated with or endorsed by Electronic Arts or Maxis.
