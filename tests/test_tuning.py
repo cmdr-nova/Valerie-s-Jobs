@@ -30,9 +30,19 @@ class InterviewTuningTests(unittest.TestCase):
     def test_interviews_use_safe_time_based_content(self):
         for path in TUNING.glob("ValeriesJobs_JobInterview_*.xml"):
             root = ET.parse(path).getroot()
+            self.assertEqual(root.attrib["c"], "JobInterviewInteraction")
+            self.assertEqual(root.attrib["m"], "valeries_jobs.interview_interaction")
             self.assertIsNotNone(root.find(".//V[@t='time_based']"))
             self.assertIsNone(root.find(".//U[@n='animation_ref']"))
             self.assertIsNone(root.find(".//V[@t='posture']"))
+            self.assertIsNone(root.find("./L[@n='basic_liabilities']"))
+
+    def test_interviews_route_to_lot_exit_before_hiding(self):
+        for path in TUNING.glob("ValeriesJobs_JobInterview_*.xml"):
+            root = ET.parse(path).getroot()
+            spawn_tag = root.find(".//L[@n='Spawn_Point_Tags']/E")
+            self.assertIsNotNone(spawn_tag)
+            self.assertEqual(spawn_tag.text, "Spawn_Arrival")
 
     def test_rabbit_holes_have_an_away_action(self):
         for path in TUNING.glob("*RabbitHole*.xml"):

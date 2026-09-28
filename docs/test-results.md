@@ -40,3 +40,7 @@ In-game result: passed. The user confirmed that career interception, the intervi
 The game produced two tuning-load exceptions (`'str' object has no attribute 'factory'`) for the interview interactions, followed by a transition exception (`'tuple' object has no attribute 'get'`). The queued interview consequently canceled instead of entering the rabbit hole. The causes were inherited animation-factory and posture-constraint structures that were invalid in the custom tuning context.
 
 Version `0.2.1-dev` removes both structures and follows EA's simpler time-based rabbit-hole interaction schema. Regression tests now reject either structure if it is reintroduced.
+
+### Failed `0.2.1-dev` test and corrected diagnosis
+
+The same exception recurred. Bytecode inspection showed line 2339 accesses `liability.factory`: a tuning-defined basic liability had loaded as a string. That exception prevented the same callback from converting `_constraints` into its runtime mapping, which caused the later tuple error. Version `0.2.2-dev` therefore removes all tuning-defined liabilities and uses a small custom Python interaction to apply only EA's `HideSimLiability` after the Sim routes to the lot's `Spawn_Arrival` marker.
