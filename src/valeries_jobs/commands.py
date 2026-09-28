@@ -32,3 +32,19 @@ def valeries_jobs_test_apply(charisma: int = 0, primary_skill: int = 0, _connect
     output(message)
     LOGGER.info(message)
 
+
+@sims4.commands.Command("vj.complete_interview", command_type=sims4.commands.CommandType.Live)
+def valeries_jobs_complete_interview(_connection=None):
+    """Finish the active Sim's pending interview during development testing."""
+
+    import services
+    from valeries_jobs.interviews import _complete_interview, _PENDING
+
+    output = sims4.commands.CheatOutput(_connection)
+    client = services.client_manager().get(_connection)
+    sim_info = client.active_sim_info if client is not None else None
+    if sim_info is None or sim_info.id not in _PENDING:
+        output("Valerie's Jobs: the active Sim has no pending interview.")
+        return
+    _complete_interview(sim_info.id)
+    output("Valerie's Jobs: pending interview completed for testing.")

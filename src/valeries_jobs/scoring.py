@@ -7,16 +7,30 @@ def _clamp(value, minimum, maximum):
     return max(minimum, min(maximum, value))
 
 
-def _skill_bonus(level, maximum_bonus):
+def _entry_skill_bonus(level, level_two_bonus, level_three_bonus, maximum_bonus):
+    """Reward beginner skill levels strongly, then taper later gains."""
+
     normalized_level = _clamp(int(level), 0, 10)
-    return round((normalized_level / 10.0) * maximum_bonus)
+    if normalized_level == 0:
+        return 0
+    if normalized_level == 1:
+        return level_two_bonus // 2
+    if normalized_level == 2:
+        return level_two_bonus
+    if normalized_level == 3:
+        return level_three_bonus
+    remaining_levels = 10 - 3
+    remaining_bonus = maximum_bonus - level_three_bonus
+    return level_three_bonus + round(
+        ((normalized_level - 3) / float(remaining_levels)) * remaining_bonus
+    )
 
 
 def calculate_interview_chance(
     primary_level=0,
     secondary_levels=(),
     charisma_level=0,
-    base_chance=30,
+    base_chance=40,
     degree_bonus=0,
     mood_modifier=0,
     trait_modifier=0,
@@ -25,10 +39,12 @@ def calculate_interview_chance(
 ):
     """Return a bounded, integer acceptance percentage."""
 
-    primary_bonus = _skill_bonus(primary_level, 25)
+    primary_bonus = _entry_skill_bonus(primary_level, 16, 24, 35)
     secondary_values = tuple(secondary_levels)[:3]
-    secondary_bonus = sum(_skill_bonus(level, 5) for level in secondary_values)
-    charisma_bonus = _skill_bonus(charisma_level, 10)
+    secondary_bonus = sum(
+        _entry_skill_bonus(level, 3, 5, 8) for level in secondary_values
+    )
+    charisma_bonus = _entry_skill_bonus(charisma_level, 6, 9, 15)
 
     raw_chance = (
         int(base_chance)
@@ -62,4 +78,3 @@ def resolve_interview(chance, ghost_listing=False, rng=None):
         "outcome": outcome,
         "ghost_listing": bool(ghost_listing),
     }
-

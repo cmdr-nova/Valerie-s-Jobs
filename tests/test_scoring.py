@@ -12,7 +12,17 @@ from valeries_jobs.scoring import calculate_interview_chance, resolve_interview 
 
 class InterviewScoringTests(unittest.TestCase):
     def test_unskilled_baseline(self):
-        self.assertEqual(calculate_interview_chance(), 30)
+        self.assertEqual(calculate_interview_chance(), 40)
+
+    def test_beginner_skills_are_meaningful(self):
+        self.assertEqual(
+            calculate_interview_chance(primary_level=2, charisma_level=2),
+            62,
+        )
+        self.assertEqual(
+            calculate_interview_chance(primary_level=3, charisma_level=3),
+            73,
+        )
 
     def test_skill_bonuses(self):
         chance = calculate_interview_chance(
@@ -20,7 +30,7 @@ class InterviewScoringTests(unittest.TestCase):
             secondary_levels=(10, 10, 10),
             charisma_level=10,
         )
-        self.assertEqual(chance, 80)
+        self.assertEqual(chance, 95)
 
     def test_chance_is_clamped(self):
         self.assertEqual(calculate_interview_chance(base_chance=-500), 5)
@@ -41,4 +51,3 @@ class InterviewScoringTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

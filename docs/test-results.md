@@ -13,3 +13,15 @@
 
 This certifies the script loader, command registration, Python 3.7 bytecode, scoring calculation, randomized resolution, and cheat-console output. It does not yet certify career interception, career assignment, persistence, tuning resources, or interview interactions because those features are not implemented.
 
+## 2026-09-28 — Interview vertical slice ready for test
+
+- Mod version: `0.1.0-dev`
+- Added mapped career interception, including Actor and known part-time jobs
+- Added real skill reads and front-loaded entry-level scoring
+- Added one- or two-Sim-hour interview timers
+- Added success, rejection, and ghost-listing notifications
+- Added native career assignment after acceptance
+- Added `vj.complete_interview` to shorten development tests
+- Host result: 14 unit tests passed; Python 3.7 script archive built
+
+In-game result: pending. This build does not yet include the custom off-lot rabbit-hole interaction or persistence across save/reload.
