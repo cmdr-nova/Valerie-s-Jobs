@@ -1,0 +1,8 @@
+{
+  "game_version": "1.128.90.1030",
+  "snapshot": "compatibility/snapshots/1.128.90.1030.json",
+  "status": "development",
+  "tested_on": null,
+  "notes": "Initial development baseline; not yet a supported release."
+}
+

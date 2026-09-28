@@ -1,0 +1,75 @@
+{
+  "files": {
+    "python_base": {
+      "path": "Data/Simulation/Gameplay/base.zip",
+      "sha256": "5e53e2a5622fa8806f92d8b75a5639ad4b83d49dbaad4add602a411421d02594",
+      "size": 1830057
+    },
+    "python_core": {
+      "path": "Data/Simulation/Gameplay/core.zip",
+      "sha256": "641e9233c44763b0103517ed40da37186fcd10df76143896d6bf3c497a38690b",
+      "size": 332162
+    },
+    "python_generated": {
+      "path": "Game/Bin/Python/generated.zip",
+      "sha256": "b5f9174a75ecf1343f9442ed5391980ae6116e5c3dc41d0e7c25192c8a9921b7",
+      "size": 497056
+    },
+    "python_simulation": {
+      "path": "Data/Simulation/Gameplay/simulation.zip",
+      "sha256": "b97d71bb8c92116b4320ed640f5d3f06c3e4f1e3fb2f7dfd5fea5f924d0324ec",
+      "size": 10130550
+    },
+    "simulation_tuning_delta": {
+      "path": "Data/Simulation/SimulationDeltaBuild0.package",
+      "sha256": "6282745e8dd720e14e38e96101d425d38b42042154fd0ff331739ca9cbbc0b55",
+      "size": 70270586
+    },
+    "simulation_tuning_full": {
+      "path": "Data/Simulation/SimulationFullBuild0.package",
+      "sha256": "f2ad38e56edd9a8f9e42a6bdae1e472e65dbc9da924e849e41143c16abf7aa70",
+      "size": 24788352
+    }
+  },
+  "game_version": "1.128.90.1030",
+  "recorded_at": "2026-09-28T06:56:02.064944+00:00",
+  "schema": 1,
+  "zip_members": {
+    "Data/Simulation/Gameplay/simulation.zip::careers/acting/acting_tuning.pyc": {
+      "sha256": "d546621f04c14eaa803e22decb78877d60a1cb73ee1a29afc0c4cd1c8d8b2097",
+      "size": 572
+    },
+    "Data/Simulation/Gameplay/simulation.zip::careers/active_career_gig.pyc": {
+      "sha256": "6c82d01e6f67bc13c8850a9488f32615a98e7a65ba9fae4469cbb19df09d5d4a",
+      "size": 6660
+    },
+    "Data/Simulation/Gameplay/simulation.zip::careers/career_base.pyc": {
+      "sha256": "42f967787b73ea420ec6479385b813dd65343092b91b8cc9a342c2d7f464e545",
+      "size": 118505
+    },
+    "Data/Simulation/Gameplay/simulation.zip::careers/career_interactions.pyc": {
+      "sha256": "ac07e453f074bce62489458911688236514de50c781073f89590d3e75ebaa6e4",
+      "size": 23451
+    },
+    "Data/Simulation/Gameplay/simulation.zip::careers/career_service.pyc": {
+      "sha256": "44111cc5ec66a55eef3877ccb2e649394a94be97ee79358a7beb272c095c1d60",
+      "size": 18705
+    },
+    "Data/Simulation/Gameplay/simulation.zip::careers/career_tracker.pyc": {
+      "sha256": "b7bb44016643b3d6912758560ffdd4225683576dbfb294f2e7ec2f41bb51db26",
+      "size": 36296
+    },
+    "Data/Simulation/Gameplay/simulation.zip::careers/career_tuning.pyc": {
+      "sha256": "29ade1df6adb81d2a62348ebbe85fd71baad2cceabbb9ba40e2149ca8a45649d",
+      "size": 87114
+    },
+    "Data/Simulation/Gameplay/simulation.zip::careers/noble_career.pyc": {
+      "sha256": "1c8b327001fe31545715a163692b5b7e50e0bb32cb7f813bc7484a8483da6584",
+      "size": 7876
+    },
+    "Data/Simulation/Gameplay/simulation.zip::careers/pick_career_by_agent_interaction.pyc": {
+      "sha256": "393626f873185b4e61ac379d8115a26359533d2a6d97709a4c2c5e5843b8ffee",
+      "size": 3577
+    }
+  }
+}

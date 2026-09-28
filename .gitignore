@@ -1,0 +1,9 @@
+.cache/
+.pytest_cache/
+.vscode/
+__pycache__/
+*.py[cod]
+build/
+dist/
+config/local_paths.json
+
