@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <I c="JobInterviewInteraction" i="interaction" m="valeries_jobs.interview_interaction" n="ValeriesJobs_JobInterview_TwoHours" s="11473922217750090871">
   <L n="_constraints">
+    <U><L n="constraints"><U><V n="value" t="posture"><U n="posture"><L n="posture_manifest_tuning"><U><V n="carry_left" t="None"/><V n="carry_right" t="None"/><V n="posture_type" t="enabled"><T n="enabled">23832</T></V><V n="surface" t="None"/></U></L></U></V></U></L></U>
     <U><L n="constraints"><U><V n="value" t="spawn_points"><U n="spawn_points"><V n="tags" t="Spawn_Point_Tags"><L n="Spawn_Point_Tags"><E>Spawn_Arrival</E></L></V></U></V></U></L></U>
   </L>
   <V n="_icon" t="participant"><U n="participant"><L n="participant_type"><E>Actor</E></L></U></V>
@@ -8,7 +9,24 @@
   <T n="attention_cost">0.5</T>
   <V n="basic_content" t="flexible_length">
     <U n="flexible_length">
-      <L n="conditional_actions"><V t="literal"><U n="literal"><L n="conditions"><V t="time_based"><U n="time_based"><T n="max_time">120</T><T n="min_time">120</T></U></V></L><E n="interaction_action">EXIT_NATURALLY</E></U></V></L>
+      <L n="conditional_actions">
+        <V t="literal">
+          <U n="literal">
+            <L n="conditions">
+              <V t="time_based">
+                <U n="time_based">
+                  <T n="max_time">121</T>
+                  <T n="min_time">121</T>
+                </U>
+              </V>
+            </L>
+            <E n="interaction_action">EXIT_NATURALLY</E>
+            <E n="progress_bar_action">FORCE_USE_CONDITION</E>
+          </U>
+        </V>
+      </L>
+      <V n="content" t="looping_content"><U n="looping_content"><U n="animation_ref"><T n="factory">23834</T></U></U></V>
+      <T n="start_autonomous_inertial">True</T>
     </U>
   </V>
   <V n="content_score" t="disabled"/>

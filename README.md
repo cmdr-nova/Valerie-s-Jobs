@@ -11,6 +11,7 @@ Instead of joining immediately, your Sim travels to a one- or two-hour off-scree
 - Skill-based interviews for supported full-time and part-time careers
 - One- or two-hour rabbit-hole interviews
 - Modal acceptance and rejection results with feedback
+- Temporary Confident, Sad, or Scared moodlets with outcome-specific flavor text
 - Easier expectations for entry-level and part-time applicants
 - A small chance of encountering a fake job listing
 - Automatic career assignment after a successful interview
@@ -27,7 +28,7 @@ Do not place the script more than one folder beneath `Mods`.
 
 ## Development status
 
-The current `0.2.3-dev` build is an early testing release for The Sims 4 version `1.128.90.1030`. The main interview flow, rabbit-hole presentation, outcome dialogs, and career assignment have passed in-game testing. Save/reload persistence for an interview already in progress is not implemented yet, so use a disposable save while testing.
+The current `0.3.2-dev` build is an early testing release for The Sims 4 version `1.128.90.1030`. The main interview flow, rabbit-hole presentation, outcome dialogs, career assignment, clean return from the rabbit hole, and visible acceptance moodlet have passed in-game testing. The rejection and ghost-listing moodlet variants share the same tested UI structure but have not yet been independently confirmed in game. Save/reload persistence for an interview already in progress is not implemented yet, so use a disposable save while testing.
 
 Please report bugs through GitHub Issues and include your game version, mod version, what your Sim was doing, and any `lastException` file.
 

@@ -9,6 +9,7 @@ from careers.career_tracker import CareerTracker
 
 from valeries_jobs.catalog import get_profile, should_bypass
 from valeries_jobs.game_skills import read_profile_levels
+from valeries_jobs.moodlets import apply_outcome_moodlet
 from valeries_jobs.notifications import show_dialog
 from valeries_jobs.rabbit_holes import (
     finish_interview_rabbit_hole,
@@ -84,6 +85,7 @@ def _complete_interview(sim_id):
         body = feedback
     else:
         body = "{}\n\nInterview chance: {}%.".format(feedback, result["chance"])
+    apply_outcome_moodlet(sim_info, result["outcome"])
     show_dialog(title, body, sim_info)
     LOGGER.info(
         "Interview completed for {}: career={}, chance={}, roll={}, outcome={}",
@@ -114,6 +116,7 @@ def _start_interview(tracker, new_career, kwargs):
         "profile": profile,
         "kwargs": kwargs,
         "duration": duration,
+        "managed_rabbit_hole": True,
     }
     _PENDING[sim_id] = application
 
@@ -124,7 +127,21 @@ def _start_interview(tracker, new_career, kwargs):
             _PENDING.pop(sim_id, None)
             LOGGER.error("Interview completion failed: {}", error)
 
+    def _cancel_duration_alarm():
+        alarm_handle = application.pop("alarm", None)
+        if alarm_handle is not None:
+            alarms.cancel_alarm(alarm_handle)
+
+    def _on_duration_elapsed(_alarm_handle):
+        application.pop("alarm", None)
+        rabbit_hole_id = application.get("rabbit_hole_id")
+        if rabbit_hole_id is not None:
+            if finish_interview_rabbit_hole(sim_id, rabbit_hole_id):
+                return
+        _finish_safely()
+
     def _on_rabbit_hole_exit(canceled=False):
+        _cancel_duration_alarm()
         if canceled:
             _PENDING.pop(sim_id, None)
             show_dialog(
@@ -138,6 +155,13 @@ def _start_interview(tracker, new_career, kwargs):
         _finish_safely()
 
     def _on_rabbit_hole_enter():
+        if application["managed_rabbit_hole"]:
+            application["alarm"] = alarms.add_alarm(
+                sim_info,
+                clock.interval_in_sim_hours(duration),
+                _on_duration_elapsed,
+                cross_zone=True,
+            )
         show_dialog(
             "{} Interview Started".format(profile["name"]),
             "{} has arrived for the interview. It will take {} in-game hour{}. "
@@ -154,13 +178,11 @@ def _start_interview(tracker, new_career, kwargs):
         _on_rabbit_hole_exit,
     )
     if application["rabbit_hole_id"] is None:
-        def _on_alarm(_alarm_handle):
-            _finish_safely()
-
+        application["managed_rabbit_hole"] = False
         application["alarm"] = alarms.add_alarm(
             sim_info,
             clock.interval_in_sim_hours(duration),
-            _on_alarm,
+            _on_duration_elapsed,
             cross_zone=True,
         )
         LOGGER.warn("Interview rabbit hole unavailable; using timed fallback for {}", sim_info)

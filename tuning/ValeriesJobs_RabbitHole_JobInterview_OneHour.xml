@@ -2,4 +2,5 @@
 <I c="RabbitHole" i="rabbit_hole" m="rabbit_hole.rabbit_hole" n="ValeriesJobs_RabbitHole_JobInterview_OneHour" s="5556844565946566721">
   <T n="affordance">3593708283765050562</T>
   <T n="away_action">11159348032265205096</T>
+  <E n="time_tracking_policy">NO_TIME_LIMIT</E>
 </I>
