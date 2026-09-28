@@ -1,8 +1,7 @@
 {
   "game_version": "1.128.90.1030",
   "snapshot": "compatibility/snapshots/1.128.90.1030.json",
-  "status": "development",
-  "tested_on": null,
-  "notes": "Initial development baseline; not yet a supported release."
+  "status": "supported",
+  "tested_on": "2026-09-28",
+  "notes": "Initial script-load and scoring-command smoke test passed in game; no lastException generated."
 }
-

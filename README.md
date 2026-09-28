@@ -2,7 +2,7 @@
 
 Valerie's Jobs is a scripted gameplay mod for The Sims 4 that turns joining a career into an application and interview process. Relevant skills influence the outcome, while some employers post deliberately fake “ghost jobs.”
 
-Status: development scaffold / no playable release yet.
+Status: development scaffold / initial in-game smoke test passed on game version `1.128.90.1030`; no playable career overhaul yet.
 
 ## Current prototype
 
@@ -12,6 +12,8 @@ The first script archive provides two live commands:
 - `vj.test_apply <charisma> <primary_skill>` exercises the standalone scoring engine with supplied skill levels from 0 through 10.
 
 The prototype does not intercept the career picker or assign careers yet.
+
+The first in-game test confirmed that the script loads, both development commands execute, and no `lastException` is generated. See `docs/test-results.md`.
 
 ## Requirements
 
@@ -46,4 +48,3 @@ make deploy
 ## Copyright boundary
 
 Extracted EA Python bytecode and game resources are placed under `.cache/`, ignored by Git, and must not be redistributed. Compatibility snapshots contain hashes and filenames only.
-
