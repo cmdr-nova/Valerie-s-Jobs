@@ -1,0 +1,46 @@
+name: Build tagged release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install package-builder dependencies
+        run: npm ci
+
+      - name: Test and build
+        run: make build
+
+      - name: Package the mod
+        run: |
+          mkdir -p release
+          zip -j "release/ValeriesJobs-${GITHUB_REF_NAME}.zip" \
+            dist/ValeriesJobs.package \
+            dist/ValeriesJobs.ts4script
+
+      - name: Publish GitHub pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            "release/ValeriesJobs-${GITHUB_REF_NAME}.zip" \
+            --verify-tag \
+            --prerelease \
+            --title "Valerie's Jobs ${GITHUB_REF_NAME}" \
+            --notes "Early testing build for The Sims 4 game version 1.128.90.1030. Download and extract the ZIP into your Mods folder. Save/reload persistence for interviews already in progress is not implemented yet."
