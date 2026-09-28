@@ -44,3 +44,7 @@ Version `0.2.1-dev` removes both structures and follows EA's simpler time-based 
 ### Failed `0.2.1-dev` test and corrected diagnosis
 
 The same exception recurred. Bytecode inspection showed line 2339 accesses `liability.factory`: a tuning-defined basic liability had loaded as a string. That exception prevented the same callback from converting `_constraints` into its runtime mapping, which caused the later tuple error. Version `0.2.2-dev` therefore removes all tuning-defined liabilities and uses a small custom Python interaction to apply only EA's `HideSimLiability` after the Sim routes to the lot's `Spawn_Arrival` marker.
+
+### Passed `0.2.2-dev` test and `0.2.3-dev` arrival-dialog revision
+
+The user confirmed that `0.2.2-dev` routed the Sim to the rabbit hole, hid the Sim, completed the interview, and displayed the modal result correctly. Version `0.2.3-dev` moves the interview-start dialog into a one-shot callback fired from the custom interaction's run phase, after routing succeeds. If the managed rabbit hole is unavailable and the timed fallback is used, the dialog still appears immediately because there is no physical arrival to await.

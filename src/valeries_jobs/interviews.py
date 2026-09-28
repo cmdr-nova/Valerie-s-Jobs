@@ -137,9 +137,20 @@ def _start_interview(tracker, new_career, kwargs):
             return
         _finish_safely()
 
+    def _on_rabbit_hole_enter():
+        show_dialog(
+            "{} Interview Started".format(profile["name"]),
+            "{} has arrived for the interview. It will take {} in-game hour{}. "
+            "Relevant skills are being considered now.".format(
+                _sim_name(sim_info), duration, "" if duration == 1 else "s"
+            ),
+            sim_info,
+        )
+
     application["rabbit_hole_id"] = start_interview_rabbit_hole(
         sim_info,
         duration,
+        _on_rabbit_hole_enter,
         _on_rabbit_hole_exit,
     )
     if application["rabbit_hole_id"] is None:
@@ -153,14 +164,7 @@ def _start_interview(tracker, new_career, kwargs):
             cross_zone=True,
         )
         LOGGER.warn("Interview rabbit hole unavailable; using timed fallback for {}", sim_info)
-
-    show_dialog(
-        "{} Interview Started".format(profile["name"]),
-        "{}'s interview will take {} in-game hour{}. Relevant skills are being considered now.".format(
-            _sim_name(sim_info), duration, "" if duration == 1 else "s"
-        ),
-        sim_info,
-    )
+        _on_rabbit_hole_enter()
     LOGGER.info("Started {} hour interview for {} ({})", duration, sim_info, profile["name"])
 
 
