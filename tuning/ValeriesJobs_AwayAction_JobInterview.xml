@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<I c="AwayAction" i="away_action" m="away_actions.away_actions" n="ValeriesJobs_AwayAction_JobInterview" s="11159348032265205096">
+  <L n="_exit_conditions"><U><L n="conditions"/></U></L>
+  <L n="_tests"><L><V t="at_work"><U n="at_work"><T n="is_at_work">False</T></U></V><V t="sim_info"><U n="sim_info"><V n="ages" t="specified"><L n="specified"><E>CHILD</E><E>TEEN</E><E>YOUNGADULT</E><E>ADULT</E><E>ELDER</E></L></V></U></V></L></L>
+  <V n="icon_data" t="enabled"><U n="enabled"><T n="icon" p="InGame\UI\Icons\AwayActions\AwayAction_Motives.png">2f7d0004:00000000:ef8cef52547dc77d</T><T n="tooltip">0xE1E13B87</T></U></V>
+</I>

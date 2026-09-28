@@ -1,0 +1,9 @@
+{
+  "name": "valeries-jobs-build",
+  "private": true,
+  "version": "0.2.0",
+  "description": "Build tooling for Valerie's Jobs Sims 4 tuning package",
+  "dependencies": {
+    "@s4tk/models": "0.6.14"
+  }
+}

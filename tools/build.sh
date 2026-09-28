@@ -10,3 +10,4 @@ docker run --rm \
   python:3.7.17-slim-bullseye \
   python tools/build_py37.py
 
+node tools/build_package.js

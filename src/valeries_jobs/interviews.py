@@ -9,7 +9,11 @@ from careers.career_tracker import CareerTracker
 
 from valeries_jobs.catalog import get_profile, should_bypass
 from valeries_jobs.game_skills import read_profile_levels
-from valeries_jobs.notifications import show_notification
+from valeries_jobs.notifications import show_dialog
+from valeries_jobs.rabbit_holes import (
+    finish_interview_rabbit_hole,
+    start_interview_rabbit_hole,
+)
 from valeries_jobs.scoring import calculate_interview_chance, resolve_interview
 
 
@@ -80,7 +84,7 @@ def _complete_interview(sim_id):
         body = feedback
     else:
         body = "{}\n\nInterview chance: {}%.".format(feedback, result["chance"])
-    show_notification(title, body)
+    show_dialog(title, body, sim_info)
     LOGGER.info(
         "Interview completed for {}: career={}, chance={}, roll={}, outcome={}",
         sim_info,
@@ -95,9 +99,10 @@ def _start_interview(tracker, new_career, kwargs):
     sim_info = tracker._sim_info
     sim_id = sim_info.id
     if sim_id in _PENDING:
-        show_notification(
+        show_dialog(
             "Interview Already Scheduled",
             "{} is already completing a job interview.".format(_sim_name(sim_info)),
+            sim_info,
         )
         return
 
@@ -112,24 +117,49 @@ def _start_interview(tracker, new_career, kwargs):
     }
     _PENDING[sim_id] = application
 
-    def _on_alarm(_alarm_handle):
+    def _finish_safely():
         try:
             _complete_interview(sim_id)
         except Exception as error:
             _PENDING.pop(sim_id, None)
             LOGGER.error("Interview completion failed: {}", error)
 
-    application["alarm"] = alarms.add_alarm(
+    def _on_rabbit_hole_exit(canceled=False):
+        if canceled:
+            _PENDING.pop(sim_id, None)
+            show_dialog(
+                "{} Interview Canceled".format(profile["name"]),
+                "{} left the interview before it was completed. The application was withdrawn.".format(
+                    _sim_name(sim_info)
+                ),
+                sim_info,
+            )
+            return
+        _finish_safely()
+
+    application["rabbit_hole_id"] = start_interview_rabbit_hole(
         sim_info,
-        clock.interval_in_sim_hours(duration),
-        _on_alarm,
-        cross_zone=True,
+        duration,
+        _on_rabbit_hole_exit,
     )
-    show_notification(
+    if application["rabbit_hole_id"] is None:
+        def _on_alarm(_alarm_handle):
+            _finish_safely()
+
+        application["alarm"] = alarms.add_alarm(
+            sim_info,
+            clock.interval_in_sim_hours(duration),
+            _on_alarm,
+            cross_zone=True,
+        )
+        LOGGER.warn("Interview rabbit hole unavailable; using timed fallback for {}", sim_info)
+
+    show_dialog(
         "{} Interview Started".format(profile["name"]),
         "{}'s interview will take {} in-game hour{}. Relevant skills are being considered now.".format(
             _sim_name(sim_info), duration, "" if duration == 1 else "s"
         ),
+        sim_info,
     )
     LOGGER.info("Started {} hour interview for {} ({})", duration, sim_info, profile["name"])
 
@@ -155,3 +185,15 @@ def install_interview_hook():
     if CareerTracker.add_career is not _intercepted_add_career:
         CareerTracker.add_career = _intercepted_add_career
         LOGGER.info("Valerie's Jobs career interview hook installed.")
+
+
+def complete_interview_for_test(sim_id):
+    application = _PENDING.get(sim_id)
+    if application is None:
+        return False
+    rabbit_hole_id = application.get("rabbit_hole_id")
+    if rabbit_hole_id is not None:
+        if finish_interview_rabbit_hole(sim_id, rabbit_hole_id):
+            return True
+    _complete_interview(sim_id)
+    return True

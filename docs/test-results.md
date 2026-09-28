@@ -24,4 +24,13 @@ This certifies the script loader, command registration, Python 3.7 bytecode, sco
 - Added `vj.complete_interview` to shorten development tests
 - Host result: 14 unit tests passed; Python 3.7 script archive built
 
-In-game result: pending. This build does not yet include the custom off-lot rabbit-hole interaction or persistence across save/reload.
+In-game result: passed. The user confirmed that career interception, the interview delay, outcome display, and hiring worked. This test did not cover a custom off-lot rabbit hole or modal result dialog.
+
+## 2026-09-28 — Rabbit-hole and modal-dialog revision ready for test
+
+- Mod version: `0.2.0-dev`
+- Added Valerie-specific one-hour and two-hour managed rabbit-hole tunings
+- Added a custom `At Job Interview` away action with no Actor audition rewards or buffs
+- Replaced transient notifications with modal OK dialogs
+- Kept a timed fallback if the tuning package cannot be loaded
+- In-game result: pending

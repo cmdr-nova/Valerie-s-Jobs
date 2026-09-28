@@ -38,7 +38,7 @@ def valeries_jobs_complete_interview(_connection=None):
     """Finish the active Sim's pending interview during development testing."""
 
     import services
-    from valeries_jobs.interviews import _complete_interview, _PENDING
+    from valeries_jobs.interviews import complete_interview_for_test, _PENDING
 
     output = sims4.commands.CheatOutput(_connection)
     client = services.client_manager().get(_connection)
@@ -46,5 +46,5 @@ def valeries_jobs_complete_interview(_connection=None):
     if sim_info is None or sim_info.id not in _PENDING:
         output("Valerie's Jobs: the active Sim has no pending interview.")
         return
-    _complete_interview(sim_info.id)
+    complete_interview_for_test(sim_info.id)
     output("Valerie's Jobs: pending interview completed for testing.")
