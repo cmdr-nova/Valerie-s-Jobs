@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -44,3 +48,10 @@ jobs:
             --prerelease \
             --title "Valerie's Jobs ${GITHUB_REF_NAME}" \
             --notes "Early testing build for The Sims 4 game version 1.128.90.1030. Download and extract the ZIP into your Mods folder. Save/reload persistence for interviews already in progress is not implemented yet."
+
+      - name: Upload Beta to CurseForge
+        env:
+          CURSEFORGE_API_TOKEN: ${{ secrets.VALERIE_CURSE }}
+          CURSEFORGE_PROJECT_ID: "1727866"
+          CURSEFORGE_GAME_VERSION_IDS: ${{ vars.CURSEFORGE_GAME_VERSION_IDS }}
+        run: python3 tools/upload_curseforge.py
