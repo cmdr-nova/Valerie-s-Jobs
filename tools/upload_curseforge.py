@@ -20,8 +20,8 @@ class NoRedirects(HTTPRedirectHandler):
         return None
 
 
-def game_version_ids(versions, configured):
-    """Use explicit dashboard IDs, or resolve the base-game tag unambiguously."""
+def game_version_ids(versions, configured, supported_game=""):
+    """Use explicit IDs, Base Game, or the exact tested patch; never guess latest."""
     available = {int(version["id"]) for version in versions}
     if configured.strip():
         ids = [int(value.strip()) for value in configured.split(",")]
@@ -33,9 +33,13 @@ def game_version_ids(versions, configured):
         for version in versions
         if str(version.get("name", "")).strip().casefold() == "base game"
     ]
+    if not matches and supported_game:
+        patch = ".".join(supported_game.split(".")[:3])
+        matches = [int(version["id"]) for version in versions
+                   if str(version.get("name", "")).strip() in (supported_game, patch)]
     if len(matches) != 1:
         raise ValueError(
-            "Cannot resolve a unique Base Game tag. Set the repository variable "
+            "Cannot resolve a unique Base Game or tested-patch tag. Set the repository variable "
             "CURSEFORGE_GAME_VERSION_IDS to the comma-separated dashboard IDs."
         )
     return matches
@@ -73,8 +77,8 @@ def main():
     headers = {"X-Api-Token": token, "User-Agent": "ValeriesJobs-release"}
     with opener.open(Request(API + "/game/versions", headers=headers), timeout=60) as response:
         versions = json.load(response)
-    ids = game_version_ids(versions, os.environ.get("CURSEFORGE_GAME_VERSION_IDS", ""))
     supported = json.loads((ROOT / "compatibility/supported.json").read_text())["game_version"]
+    ids = game_version_ids(versions, os.environ.get("CURSEFORGE_GAME_VERSION_IDS", ""), supported)
     metadata = {
         "displayName": "Valerie's Jobs " + namespace["MOD_VERSION"],
         "releaseType": "beta",
