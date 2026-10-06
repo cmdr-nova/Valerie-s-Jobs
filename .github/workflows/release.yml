@@ -44,10 +44,11 @@ jobs:
         run: |
           gh release create "$GITHUB_REF_NAME" \
             "release/ValeriesJobs-${GITHUB_REF_NAME}.zip" \
+            "dist/translation-strings.json" \
             --verify-tag \
             --prerelease \
             --title "Valerie's Jobs ${GITHUB_REF_NAME}" \
-            --notes "Early testing build for The Sims 4 game version 1.128.90.1030. Download and extract the ZIP into your Mods folder. Save/reload persistence for interviews already in progress is not implemented yet."
+            --notes-file "docs/releases/${GITHUB_REF_NAME}.md"
 
       - name: Upload Beta to CurseForge
         env:

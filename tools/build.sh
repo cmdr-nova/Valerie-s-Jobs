@@ -11,3 +11,4 @@ docker run --rm \
   python tools/build_py37.py
 
 node tools/build_package.js
+node tools/verify_localization.js

@@ -1,0 +1,23 @@
+{
+  "dialog.ok": "OK",
+  "sim.fallback": "Your Sim",
+  "feedback.ghosted": "The employer decided not to fill the position after all. This was a ghost listing, so the interview was never winnable.",
+  "feedback.accepted.skill": "Their {0.String} skill made a strong entry-level impression.",
+  "feedback.accepted.potential": "Their potential and interview answers won the employer over.",
+  "feedback.accepted": "The offer is official! {0.String}",
+  "feedback.rejected.skill": "Building {0.String} to level 2 or 3 would make the next application stronger.",
+  "feedback.rejected.charisma": "The qualifications were promising, but the interview answers did not quite land.",
+  "feedback.rejected.competition": "They interviewed well, but another applicant narrowly edged them out.",
+  "feedback.rejected": "No offer this time. {0.String}",
+  "result.accepted.title": "{0.String} Interview: You're Hired!",
+  "result.ghosted.title": "{0.String} Interview: Position Withdrawn",
+  "result.rejected.title": "{0.String} Interview: No Offer",
+  "result.body": "{0.String}\n\nInterview chance: {1.Number}%.",
+  "scheduled.title": "Interview Already Scheduled",
+  "scheduled.body": "{0.String} is already completing a job interview.",
+  "canceled.title": "{0.String} Interview Canceled",
+  "canceled.body": "{0.String} left the interview before it was completed. The application was withdrawn.",
+  "started.title": "{0.String} Interview Started",
+  "started.body.one": "{0.String} has arrived for the interview. It will take one in-game hour. Relevant skills are being considered now.",
+  "started.body.two": "{0.String} has arrived for the interview. It will take two in-game hours. Relevant skills are being considered now."
+}

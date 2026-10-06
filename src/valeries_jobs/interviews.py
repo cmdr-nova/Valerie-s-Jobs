@@ -11,6 +11,7 @@ from valeries_jobs.catalog import get_profile, should_bypass
 from valeries_jobs.game_skills import read_profile_levels
 from valeries_jobs.moodlets import apply_outcome_moodlet
 from valeries_jobs.notifications import show_dialog
+from valeries_jobs.localization import text
 from valeries_jobs.rabbit_holes import (
     finish_interview_rabbit_hole,
     start_interview_rabbit_hole,
@@ -25,30 +26,27 @@ _ORIGINAL_ADD_CAREER = CareerTracker.add_career
 
 
 def _sim_name(sim_info):
-    return getattr(sim_info, "first_name", "Your Sim")
+    return getattr(sim_info, "first_name", None) or text("sim.fallback")
 
 
 def _feedback(profile, levels, result):
     if result["outcome"] == "ghosted":
-        return (
-            "The employer decided not to fill the position after all. "
-            "This was a ghost listing, so the interview was never winnable."
-        )
-    primary_name = profile["primary"].replace("_", " ").title()
+        return text("feedback.ghosted")
+    primary_name = text("skill." + profile["primary"])
     primary_level = levels["primary"]
     if result["outcome"] == "accepted":
         if primary_level >= 2:
-            reason = "Their {} skill made a strong entry-level impression.".format(primary_name)
+            reason = text("feedback.accepted.skill", primary_name)
         else:
-            reason = "Their potential and interview answers won the employer over."
-        return "The offer is official! {}".format(reason)
+            reason = text("feedback.accepted.potential")
+        return text("feedback.accepted", reason)
     if primary_level < 2:
-        reason = "Building {} to level 2 or 3 would make the next application stronger.".format(primary_name)
+        reason = text("feedback.rejected.skill", primary_name)
     elif levels["charisma"] < 2:
-        reason = "The qualifications were promising, but the interview answers did not quite land."
+        reason = text("feedback.rejected.charisma")
     else:
-        reason = "They interviewed well, but another applicant narrowly edged them out."
-    return "No offer this time. {}".format(reason)
+        reason = text("feedback.rejected.competition")
+    return text("feedback.rejected", reason)
 
 
 def _complete_interview(sim_id):
@@ -75,16 +73,16 @@ def _complete_interview(sim_id):
             kwargs = dict(application["kwargs"])
             kwargs["show_confirmation_dialog"] = False
             _ORIGINAL_ADD_CAREER(sim_info.career_tracker, career, **kwargs)
-        title = "{} Interview: You're Hired!".format(career_name)
+        title = text("result.accepted.title", text("career." + str(career.guid64)))
     elif result["outcome"] == "ghosted":
-        title = "{} Interview: Position Withdrawn".format(career_name)
+        title = text("result.ghosted.title", text("career." + str(career.guid64)))
     else:
-        title = "{} Interview: No Offer".format(career_name)
+        title = text("result.rejected.title", text("career." + str(career.guid64)))
 
     if result["outcome"] == "ghosted":
         body = feedback
     else:
-        body = "{}\n\nInterview chance: {}%.".format(feedback, result["chance"])
+        body = text("result.body", feedback, result["chance"])
     apply_outcome_moodlet(sim_info, result["outcome"])
     show_dialog(title, body, sim_info)
     LOGGER.info(
@@ -102,8 +100,8 @@ def _start_interview(tracker, new_career, kwargs):
     sim_id = sim_info.id
     if sim_id in _PENDING:
         show_dialog(
-            "Interview Already Scheduled",
-            "{} is already completing a job interview.".format(_sim_name(sim_info)),
+            text("scheduled.title"),
+            text("scheduled.body", _sim_name(sim_info)),
             sim_info,
         )
         return
@@ -145,10 +143,8 @@ def _start_interview(tracker, new_career, kwargs):
         if canceled:
             _PENDING.pop(sim_id, None)
             show_dialog(
-                "{} Interview Canceled".format(profile["name"]),
-                "{} left the interview before it was completed. The application was withdrawn.".format(
-                    _sim_name(sim_info)
-                ),
+                text("canceled.title", text("career." + str(new_career.guid64))),
+                text("canceled.body", _sim_name(sim_info)),
                 sim_info,
             )
             return
@@ -163,11 +159,8 @@ def _start_interview(tracker, new_career, kwargs):
                 cross_zone=True,
             )
         show_dialog(
-            "{} Interview Started".format(profile["name"]),
-            "{} has arrived for the interview. It will take {} in-game hour{}. "
-            "Relevant skills are being considered now.".format(
-                _sim_name(sim_info), duration, "" if duration == 1 else "s"
-            ),
+            text("started.title", text("career." + str(new_career.guid64))),
+            text("started.body.one" if duration == 1 else "started.body.two", _sim_name(sim_info)),
             sim_info,
         )
 

@@ -88,6 +88,9 @@ def main():
             "Saving and reloading during an interview is not supported yet."
         ).format(tag=tag, game=supported),
     }
+    release_notes = ROOT / "docs/releases" / (tag + ".md")
+    if release_notes.is_file():
+        metadata["changelog"] = release_notes.read_text() + "\n\n" + metadata["changelog"]
     boundary = "ValeriesJobs" + uuid.uuid4().hex
     body = multipart(metadata, archive_path.name, archive_path.read_bytes(), boundary)
     request = Request(

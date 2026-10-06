@@ -4,6 +4,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { execFileSync } = require("child_process");
 const {
   Package,
   SimDataResource,
@@ -14,6 +15,7 @@ const {
   BinaryResourceType,
   SimDataGroup,
   TuningResourceType,
+  StringTableLocale,
 } = require("@s4tk/models/enums");
 
 const root = path.resolve(__dirname, "..");
@@ -55,7 +57,7 @@ for (const [filename, instance] of buffSimData) {
   });
 }
 
-const strings = new StringTableResource([
+const originalStrings = [
   { key: 0x042dc034, value: "Job Interview" },
   { key: 0xe3ac5520, value: "Attend Job Interview" },
   { key: 0xe1e13b87, value: "At Job Interview" },
@@ -74,15 +76,27 @@ const strings = new StringTableResource([
     key: 0x1e923aed,
     value: "All that preparation for a position they never planned to fill. At least the interview outfit looked good.",
   },
-]);
-resources.push({
-  key: {
-    type: BinaryResourceType.StringTable,
-    group: modGroup,
-    instance: 0x00eb85778989bd91n,
-  },
-  value: strings,
-});
+];
+const additions = JSON.parse(execFileSync("python3", [path.join(root, "tools/export_strings.py")], { encoding: "utf8" }));
+const allStrings = [...originalStrings, ...additions];
+if (new Set(allStrings.map(entry => entry.key)).size !== allStrings.length) {
+  throw new Error("Duplicate STBL keys: preserve existing keys and resolve collisions before release.");
+}
+// English fallback in each supported language; translators replace the matching
+// locale resource in a separate package. Existing English instance is unchanged.
+for (const locale of Object.values(StringTableLocale).filter(value => typeof value === "number")) {
+  resources.push({
+    key: {
+      type: BinaryResourceType.StringTable,
+      group: modGroup,
+      instance: (BigInt(locale) << 56n) | 0x00eb85778989bd91n,
+    },
+    value: new StringTableResource(allStrings),
+  });
+}
+
+fs.mkdirSync(outputDir, { recursive: true });
+fs.writeFileSync(path.join(outputDir, "translation-strings.json"), JSON.stringify(allStrings, null, 2) + "\n");
 
 fs.mkdirSync(outputDir, { recursive: true });
 const pkg = new Package(resources);

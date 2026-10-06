@@ -28,7 +28,11 @@ Do not place the script more than one folder beneath `Mods`.
 
 ## Development status
 
-The current `0.3.2-dev` build is an early testing release for The Sims 4 version `1.128.90.1030`. The main interview flow, rabbit-hole presentation, outcome dialogs, career assignment, clean return from the rabbit hole, and visible acceptance moodlet have passed in-game testing. The rejection and ghost-listing moodlet variants share the same tested UI structure but have not yet been independently confirmed in game. Save/reload persistence for an interview already in progress is not implemented yet, so use a disposable save while testing.
+The current `0.3.3-dev` build is an early testing release for The Sims 4 version `1.128.90.1030`. It adds complete gameplay-text localization support; the new localized dialogs still need in-game verification. The preceding interview flow, rabbit-hole presentation, career assignment, clean return, and visible acceptance moodlet passed in-game testing. Save/reload persistence for an interview already in progress is not implemented yet, so use a disposable save while testing.
+
+## Translations
+
+Interview messages, career/skill labels, action names and moodlets now use STBL entries. Translators can provide a separate localization `.package` without editing the script. The original nine keys remain unchanged; download `translation-strings.json` from the release for the complete string list. English fallback is included, but a Spanish translation is not bundled yet. See [translation instructions](docs/localization.md), including placeholders and the Spanish STBL instance.
 
 Please report bugs through GitHub Issues and include your game version, mod version, what your Sim was doing, and any `lastException` file.
 
