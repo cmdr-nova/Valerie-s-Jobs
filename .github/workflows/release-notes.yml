@@ -1,0 +1,39 @@
+name: Sync latest release notes
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/releases/**"
+      - ".github/workflows/release-notes.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-release-notes
+  cancel-in-progress: false
+
+jobs:
+  notes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update notes for the newest published release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag=$(gh api "repos/${GITHUB_REPOSITORY}/releases" --jq 'map(select(.draft == false))[0].tag_name // empty')
+          if [[ -z "$tag" || ! "$tag" =~ ^v[0-9][A-Za-z0-9._-]*$ ]]; then
+            echo "No supported published release found; skipping."
+            exit 0
+          fi
+          notes="docs/releases/${tag}.md"
+          if [[ ! -f "$notes" ]]; then
+            echo "No notes file for ${tag}; skipping."
+            exit 0
+          fi
+          gh release edit "$tag" --notes-file "$notes"
