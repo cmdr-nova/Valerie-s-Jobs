@@ -3,6 +3,8 @@
 Neutral Spanish translation contributed by **BRØDA TS4** for Valerie's Jobs
 0.3.3-dev, bundled starting with 0.3.4-dev.
 
+Creator's translation post: https://www.patreon.com/BR0DA_TS4/posts/valeries-jobs-v0-171744476
+
 The user reports that the creator gave permission to include this translation
 in the official release. This is not a blanket license for unrelated reuse.
 The original package is preserved without modification here. The build validates

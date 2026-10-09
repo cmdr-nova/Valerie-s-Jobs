@@ -32,7 +32,7 @@ The current `0.3.4-dev` build is an early testing release for The Sims 4 version
 
 ## Translations
 
-**Spanish translation: BRØDA TS4.** The complete neutral Spanish translation is bundled with permission reported by the author, and its internal creator credit is preserved. Thank you for contributing!
+**Spanish translation: [BRØDA TS4](https://www.patreon.com/BR0DA_TS4/posts/valeries-jobs-v0-171744476).** The complete neutral Spanish translation is bundled with permission reported by the author, and its internal creator credit is preserved. Thank you for contributing!
 
 Interview messages, career/skill labels, action names and moodlets use STBL entries. Spanish is included automatically for Spanish-language games; other supported languages retain English fallback. Installation remains the same two files. Remove any older standalone Valerie's Jobs Spanish translation package when updating to avoid stale overrides.
 
