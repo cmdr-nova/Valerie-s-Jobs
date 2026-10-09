@@ -5,6 +5,7 @@
 const fs = require("fs");
 const path = require("path");
 const { execFileSync } = require("child_process");
+const { validateTranslation, CREDIT_INSTANCE } = require("./spanish_translation");
 const {
   Package,
   SimDataResource,
@@ -82,8 +83,9 @@ const allStrings = [...originalStrings, ...additions];
 if (new Set(allStrings.map(entry => entry.key)).size !== allStrings.length) {
   throw new Error("Duplicate STBL keys: preserve existing keys and resolve collisions before release.");
 }
-// English fallback in each supported language; translators replace the matching
-// locale resource in a separate package. Existing English instance is unchanged.
+const spanishPackage = Package.from(fs.readFileSync(path.join(root, "localization/es/BRODA_TS4.package")));
+const spanish = validateTranslation(spanishPackage, allStrings);
+// Bundled Spanish; English fallback for the other supported languages.
 for (const locale of Object.values(StringTableLocale).filter(value => typeof value === "number")) {
   resources.push({
     key: {
@@ -91,9 +93,13 @@ for (const locale of Object.values(StringTableLocale).filter(value => typeof val
       group: modGroup,
       instance: (BigInt(locale) << 56n) | 0x00eb85778989bd91n,
     },
-    value: new StringTableResource(allStrings),
+    value: locale === StringTableLocale.Spanish ? spanish.table.value.clone() : new StringTableResource(allStrings),
   });
 }
+resources.push({
+  key: { type: BinaryResourceType.StringTable, group: modGroup, instance: CREDIT_INSTANCE },
+  value: spanish.credit.value.clone(),
+});
 
 fs.mkdirSync(outputDir, { recursive: true });
 fs.writeFileSync(path.join(outputDir, "translation-strings.json"), JSON.stringify(allStrings, null, 2) + "\n");

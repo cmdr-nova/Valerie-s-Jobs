@@ -28,11 +28,15 @@ Do not place the script more than one folder beneath `Mods`.
 
 ## Development status
 
-The current `0.3.3-dev` build is an early testing release for The Sims 4 version `1.128.90.1030`. It adds complete gameplay-text localization support; the new localized dialogs still need in-game verification. The preceding interview flow, rabbit-hole presentation, career assignment, clean return, and visible acceptance moodlet passed in-game testing. Save/reload persistence for an interview already in progress is not implemented yet, so use a disposable save while testing.
+The current `0.3.4-dev` build is an early testing release for The Sims 4 version `1.128.90.1030`. It bundles Spanish localization. The English application/interview flow, popups, and outcome moodlet passed the user's in-game test in `0.3.3-dev`; Spanish rendering still needs in-game verification. Save/reload persistence for an interview already in progress is not implemented yet, so use a disposable save while testing.
 
 ## Translations
 
-Interview messages, career/skill labels, action names and moodlets now use STBL entries. Translators can provide a separate localization `.package` without editing the script. The original nine keys remain unchanged; download `translation-strings.json` from the release for the complete string list. English fallback is included, but a Spanish translation is not bundled yet. See [translation instructions](docs/localization.md), including placeholders and the Spanish STBL instance.
+**Spanish translation: BRØDA TS4.** The complete neutral Spanish translation is bundled with permission reported by the author, and its internal creator credit is preserved. Thank you for contributing!
+
+Interview messages, career/skill labels, action names and moodlets use STBL entries. Spanish is included automatically for Spanish-language games; other supported languages retain English fallback. Installation remains the same two files. Remove any older standalone Valerie's Jobs Spanish translation package when updating to avoid stale overrides.
+
+Translators can still provide separate localization packages without editing the script. Existing keys are unchanged; download `translation-strings.json` from the release for the complete source list. See [translation instructions](docs/localization.md). Bundled translation sources are in [localization/es](localization/es); inclusion does not imply a blanket license for unrelated reuse.
 
 Please report bugs through GitHub Issues and include your game version, mod version, what your Sim was doing, and any `lastException` file.
 

@@ -1,9 +1,11 @@
-# Translation support (0.3.3-dev)
+# Translation support (0.3.4-dev)
 
 Normal gameplay dialogs, moodlets, interview action names, career labels and
 skill labels use STBL entries. Debug cheat-console output and logs remain English.
-No script changes are required for translation. English fallback tables are
-included; a Spanish translation is not yet bundled.
+No script changes are required for translation. Neutral Spanish by **BRØDA TS4**
+is bundled starting with 0.3.4-dev. Other locales retain English fallback tables.
+The original contributed package and credit are preserved in localization/es.
+Remove an older standalone Spanish override when installing the bundled version.
 
 ## Separate translation package
 
