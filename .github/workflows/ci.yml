@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install package-builder dependencies
+        run: npm ci
+
+      - name: Test and build
+        run: make build
+
+      - name: Keep the built mod files
+        uses: actions/upload-artifact@v4
+        with:
+          name: ValeriesJobs-${{ github.sha }}
+          path: |
+            dist/ValeriesJobs.package
+            dist/ValeriesJobs.ts4script
+          if-no-files-found: error
+          retention-days: 14

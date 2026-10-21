@@ -3,6 +3,7 @@
 
 import json
 import os
+import re
 import sys
 import uuid
 import zipfile
@@ -45,6 +46,30 @@ def game_version_ids(versions, configured, supported_game=""):
     return matches
 
 
+def release_type(tag):
+    """Plain vX.Y.Z tags are stable releases; anything with a suffix (-dev, -rc1) is a beta."""
+    return "release" if re.fullmatch(r"v\d+\.\d+\.\d+", tag) else "beta"
+
+
+def check_tag(tag):
+    """Fail before anything is published if the tag, version, or release notes disagree."""
+    namespace = {}
+    exec((ROOT / "src/valeries_jobs/version.py").read_text(), namespace)
+    if tag != "v" + namespace["MOD_VERSION"]:
+        raise ValueError("Release tag must match MOD_VERSION in src/valeries_jobs/version.py.")
+    if not (ROOT / "docs/releases" / (tag + ".md")).is_file():
+        raise ValueError("Missing release notes: docs/releases/{}.md".format(tag))
+    return namespace["MOD_VERSION"]
+
+
+def resolve_game_versions(opener, headers):
+    with opener.open(Request(API + "/game/versions", headers=headers), timeout=60) as response:
+        versions = json.load(response)
+    supported = json.loads((ROOT / "compatibility/supported.json").read_text())["game_version"]
+    ids = game_version_ids(versions, os.environ.get("CURSEFORGE_GAME_VERSION_IDS", ""), supported)
+    return ids, supported
+
+
 def multipart(metadata, filename, data, boundary):
     prefix = (
         "--{0}\r\nContent-Disposition: form-data; name=\"metadata\"\r\n"
@@ -55,46 +80,49 @@ def multipart(metadata, filename, data, boundary):
     return prefix + data + ("\r\n--{}--\r\n".format(boundary)).encode("ascii")
 
 
-def main():
+def main(preflight=False):
     token = os.environ.get("CURSEFORGE_API_TOKEN", "").strip()
     if not token:
         raise ValueError("Missing repository Actions secret VALERIE_CURSE.")
     tag = os.environ.get("GITHUB_REF_NAME", "")
-    namespace = {}
-    exec((ROOT / "src/valeries_jobs/version.py").read_text(), namespace)
-    if tag != "v" + namespace["MOD_VERSION"]:
-        raise ValueError("Release tag must match MOD_VERSION in src/valeries_jobs/version.py.")
+    version = check_tag(tag)
+    channel = release_type(tag)
     project = os.environ.get("CURSEFORGE_PROJECT_ID", "")
     if not project.isdecimal():
         raise ValueError("CURSEFORGE_PROJECT_ID must be numeric.")
+    opener = build_opener(NoRedirects())
+    headers = {"X-Api-Token": token, "User-Agent": "ValeriesJobs-release"}
+    ids, supported = resolve_game_versions(opener, headers)
+    if preflight:
+        # Token works and game versions resolve; tell later steps which channel this is.
+        output = os.environ.get("GITHUB_OUTPUT")
+        if output:
+            with open(output, "a") as handle:
+                handle.write("prerelease={}\n".format("true" if channel == "beta" else "false"))
+        print("Preflight passed: {} as CurseForge {} for game versions {}.".format(tag, channel, ids))
+        return
     archive_path = ROOT / "release" / ("ValeriesJobs-{}.zip".format(tag))
     with zipfile.ZipFile(archive_path) as archive:
         if sorted(archive.namelist()) != ["ValeriesJobs.package", "ValeriesJobs.ts4script"]:
             raise ValueError("Release ZIP must contain only the two functional mod files.")
         if archive.testzip() is not None:
             raise ValueError("Release ZIP failed its integrity check.")
-    opener = build_opener(NoRedirects())
-    headers = {"X-Api-Token": token, "User-Agent": "ValeriesJobs-release"}
-    with opener.open(Request(API + "/game/versions", headers=headers), timeout=60) as response:
-        versions = json.load(response)
-    supported = json.loads((ROOT / "compatibility/supported.json").read_text())["game_version"]
-    ids = game_version_ids(versions, os.environ.get("CURSEFORGE_GAME_VERSION_IDS", ""), supported)
     metadata = {
-        "displayName": "Valerie's Jobs " + namespace["MOD_VERSION"],
-        "releaseType": "beta",
+        "displayName": "Valerie's Jobs " + version,
+        "releaseType": channel,
         "gameVersions": ids,
         "changelogType": "markdown",
         "changelog": (
-            "Tagged testing build **{tag}**. Tested game baseline: **{game}**.\n\n"
+            "{kind} **{tag}**. Tested game baseline: **{game}**.\n\n"
             "See the [tagged source and changes](https://github.com/cmdr-nova/"
             "Valerie-s-Jobs/releases/tag/{tag}).\n\n"
             "Extract both mod files into Mods/ValeriesJobs and remove older copies. "
             "Saving and reloading during an interview is not supported yet."
-        ).format(tag=tag, game=supported),
+        ).format(kind="Stable release" if channel == "release" else "Tagged testing build",
+                 tag=tag, game=supported),
     }
     release_notes = ROOT / "docs/releases" / (tag + ".md")
-    if release_notes.is_file():
-        metadata["changelog"] = release_notes.read_text() + "\n\n" + metadata["changelog"]
+    metadata["changelog"] = release_notes.read_text() + "\n\n" + metadata["changelog"]
     boundary = "ValeriesJobs" + uuid.uuid4().hex
     body = multipart(metadata, archive_path.name, archive_path.read_bytes(), boundary)
     request = Request(
@@ -109,12 +137,13 @@ def main():
     file_id = result.get("id")
     if not isinstance(file_id, int):
         raise ValueError("Upload response did not contain a file ID; inspect the dashboard before retrying.")
-    print("Uploaded CurseForge Beta file {} to project {} (subject to moderation).".format(file_id, project))
+    print("Uploaded CurseForge {} file {} to project {} (subject to moderation).".format(
+        channel, file_id, project))
 
 
 if __name__ == "__main__":
     try:
-        main()
+        main(preflight="--preflight" in sys.argv[1:])
     except HTTPError as error:
         # Avoid printing server response bodies that could echo credentials.
         print("CurseForge API returned HTTP {}. Check token permissions and project approval; "
