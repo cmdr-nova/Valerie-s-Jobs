@@ -34,6 +34,20 @@ class CurseForgeUploadTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             uploader.game_version_ids(versions, "99")
 
+    def test_plain_semver_tags_are_stable_and_suffixed_tags_are_beta(self):
+        self.assertEqual(uploader.release_type("v0.3.4"), "release")
+        self.assertEqual(uploader.release_type("v1.10.0"), "release")
+        for tag in ("v0.3.4-dev", "v0.3.4-rc1", "v0.3", "0.3.4", ""):
+            self.assertEqual(uploader.release_type(tag), "beta")
+
+    def test_current_version_tag_passes_and_mismatches_fail(self):
+        namespace = {}
+        exec((Path(__file__).resolve().parents[1] / "src/valeries_jobs/version.py").read_text(), namespace)
+        version = namespace["MOD_VERSION"]
+        self.assertEqual(uploader.check_tag("v" + version), version)
+        with self.assertRaises(ValueError):
+            uploader.check_tag("v" + version + "-other")
+
     def test_multipart_preserves_zip_bytes_and_delimiters(self):
         data = b"PK\x03\x04\x00\xff"
         body = uploader.multipart({"releaseType": "beta"}, "mod.zip", data, "boundary")

@@ -28,7 +28,7 @@ Do not place the script more than one folder beneath `Mods`.
 
 ## Development status
 
-The current `0.3.4-dev` build is an early testing release for The Sims 4 version `1.128.90.1030`. It bundles Spanish localization. The English application/interview flow, popups, and outcome moodlet passed the user's in-game test in `0.3.3-dev`; Spanish rendering still needs in-game verification. Save/reload persistence for an interview already in progress is not implemented yet, so use a disposable save while testing.
+The current `0.3.4` release is the first stable build, tested on The Sims 4 version `1.128.90.1030`. It bundles Spanish localization. The English application/interview flow, popups, and outcome moodlet passed the user's in-game test in `0.3.3-dev`; Spanish rendering still needs in-game verification. Save/reload persistence for an interview already in progress is not implemented yet, so use a disposable save while testing.
 
 ## Translations
 

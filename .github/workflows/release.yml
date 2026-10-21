@@ -17,10 +17,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
+      - name: Preflight (tag, notes, CurseForge token and game versions)
+        id: preflight
+        env:
+          CURSEFORGE_API_TOKEN: ${{ secrets.VALERIE_CURSE }}
+          CURSEFORGE_PROJECT_ID: "1727866"
+          CURSEFORGE_GAME_VERSION_IDS: ${{ vars.CURSEFORGE_GAME_VERSION_IDS }}
+        run: python3 tools/upload_curseforge.py --preflight
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
@@ -38,19 +46,22 @@ jobs:
             dist/ValeriesJobs.package \
             dist/ValeriesJobs.ts4script
 
-      - name: Publish GitHub pre-release
+      - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
+          PRERELEASE: ${{ steps.preflight.outputs.prerelease }}
         run: |
+          channel_flag=--latest
+          if [[ "$PRERELEASE" == "true" ]]; then channel_flag=--prerelease; fi
           gh release create "$GITHUB_REF_NAME" \
             "release/ValeriesJobs-${GITHUB_REF_NAME}.zip" \
             "dist/translation-strings.json" \
             --verify-tag \
-            --prerelease \
+            "$channel_flag" \
             --title "Valerie's Jobs ${GITHUB_REF_NAME}" \
             --notes-file "docs/releases/${GITHUB_REF_NAME}.md"
 
-      - name: Upload Beta to CurseForge
+      - name: Upload to CurseForge
         env:
           CURSEFORGE_API_TOKEN: ${{ secrets.VALERIE_CURSE }}
           CURSEFORGE_PROJECT_ID: "1727866"
