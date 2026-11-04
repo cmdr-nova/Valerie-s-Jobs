@@ -21,6 +21,29 @@ WHOLE_FILES = {
     "simulation_tuning_delta": "Data/Simulation/SimulationDeltaBuild0.package",
 }
 
+# Install layouts differ by platform. Paths above follow the Windows/Steam
+# layout and stay the canonical names recorded in snapshots, so snapshots
+# taken on different platforms remain comparable. The macOS EA app install
+# (game_dir = ".../The Sims 4.app/Contents") keeps generated.zip elsewhere.
+PLATFORM_ALTERNATES = {
+    "Game/Bin/Python/generated.zip": ("Python/generated.zip",),
+}
+
+
+def resolve_game_file(game_dir, relative_path):
+    """Return the installed path for a canonical game-relative path."""
+    game_dir = Path(game_dir)
+    candidates = (relative_path,) + PLATFORM_ALTERNATES.get(relative_path, ())
+    for candidate in candidates:
+        path = game_dir / candidate
+        if path.is_file():
+            return path
+    raise RuntimeError(
+        "Missing monitored game file: {} (looked in {})".format(
+            relative_path, ", ".join(str(game_dir / c) for c in candidates)
+        )
+    )
+
 MONITORED_MEMBERS = {
     "Data/Simulation/Gameplay/simulation.zip": (
         "careers/career_base.pyc",
@@ -55,9 +78,7 @@ def create_snapshot():
 
     files = {}
     for label, relative_path in WHOLE_FILES.items():
-        path = game_dir / relative_path
-        if not path.is_file():
-            raise RuntimeError("Missing monitored game file: {}".format(path))
+        path = resolve_game_file(game_dir, relative_path)
         files[label] = {
             "path": relative_path,
             "size": path.stat().st_size,
@@ -66,7 +87,7 @@ def create_snapshot():
 
     members = {}
     for archive_relative, member_names in MONITORED_MEMBERS.items():
-        archive_path = game_dir / archive_relative
+        archive_path = resolve_game_file(game_dir, archive_relative)
         with zipfile.ZipFile(str(archive_path), "r") as archive:
             for member_name in member_names:
                 key = "{}::{}".format(archive_relative, member_name)

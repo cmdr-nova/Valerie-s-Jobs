@@ -10,6 +10,15 @@ Valerie's Jobs treats each game patch as unverified until its relevant interface
 
 Snapshots contain hashes only. They do not copy or redistribute EA code.
 
+## Install locations
+
+Set `game_dir` in `config/local_paths.json` to the game's install root:
+
+- Windows / Steam (incl. Proton): the `The Sims 4` folder
+- macOS EA app: `/Applications/EA Games/The Sims 4.app/Contents`
+
+Snapshots always record the Windows-style relative paths, so they compare across platforms. The macOS build ships different binaries from Windows, so expect the first `check-update` on a new platform to report changed hashes. Review and test it like any patch.
+
 ## After an EA update
 
 1. Run `make check-update`.
