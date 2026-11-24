@@ -1,4 +1,4 @@
-"""Development commands for verifying that the script loads in game."""
+"""Player cheats and development commands."""
 
 import sims4.commands
 import sims4.log
@@ -8,6 +8,31 @@ from valeries_jobs.version import MOD_NAME, MOD_VERSION
 
 
 LOGGER = sims4.log.Logger("ValeriesJobs", default_owner="Valerie")
+
+
+@sims4.commands.Command("vj.skip_next_interview", command_type=sims4.commands.CommandType.Live)
+def valeries_jobs_skip_next_interview(enabled: bool = True, _connection=None):
+    """Skip the selected Sim's next supported application; False cancels the cheat."""
+    import services
+    from valeries_jobs.interview_skips import INTERVIEW_SKIPS
+    from valeries_jobs.interviews import _PENDING
+
+    output = sims4.commands.CheatOutput(_connection)
+    client = services.client_manager().get(_connection)
+    sim_info = client.active_sim_info if client is not None else None
+    if sim_info is None:
+        output("Valerie's Jobs: select a Sim in Live Mode first.")
+        return
+    if not enabled:
+        INTERVIEW_SKIPS.cancel(sim_info.id)
+        output("Valerie's Jobs: interview skip canceled for the selected Sim.")
+        return
+    if sim_info.id in _PENDING:
+        output("Valerie's Jobs: finish or cancel this Sim's current interview first; no skip was armed.")
+        return
+    INTERVIEW_SKIPS.arm(sim_info.id)
+    output("Valerie's Jobs: the selected Sim will skip their next supported job interview and join normally. "
+           "Use vj.skip_next_interview false to cancel. This cheat resets when the game closes.")
 
 
 @sims4.commands.Command("vj.hello", command_type=sims4.commands.CommandType.Live)

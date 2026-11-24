@@ -9,6 +9,7 @@ from careers.career_tracker import CareerTracker
 
 from valeries_jobs.catalog import get_profile, should_bypass
 from valeries_jobs.game_skills import read_profile_levels
+from valeries_jobs.interview_skips import INTERVIEW_SKIPS
 from valeries_jobs.moodlets import apply_outcome_moodlet
 from valeries_jobs.notifications import show_dialog
 from valeries_jobs.localization import text
@@ -187,6 +188,14 @@ def _intercepted_add_career(self, new_career, *args, **kwargs):
     show_confirmation = kwargs.get("show_confirmation_dialog", False)
     career_type = type(new_career)
     sim_info = getattr(self, "_sim_info", None)
+    if (
+        sim_info is not None
+        and getattr(sim_info, "is_selectable", False)
+        and not should_bypass(career_type)
+        and sim_info.id not in _PENDING
+        and INTERVIEW_SKIPS.should_skip(sim_info.id, new_career.guid64, show_confirmation)
+    ):
+        return INTERVIEW_SKIPS.join(self, new_career, _ORIGINAL_ADD_CAREER, *args, **kwargs)
     if (
         not show_confirmation
         or sim_info is None

@@ -15,6 +15,7 @@ Instead of joining immediately, your Sim travels to a one- or two-hour off-scree
 - Easier expectations for entry-level and part-time applicants
 - A small chance of encountering a fake job listing
 - Automatic career assignment after a successful interview
+- Optional one-use cheat to skip the selected Sim's next interview and join immediately
 - The Noble career, freelance work, schools, retirement, and unsupported custom careers safely bypass the interview system
 
 ## Installation
@@ -28,7 +29,21 @@ Do not place the script more than one folder beneath `Mods`.
 
 ## Development status
 
-The current `0.3.4` release is the first stable build, tested on The Sims 4 version `1.128.90.1030`. It bundles Spanish localization. The English application/interview flow, popups, and outcome moodlet passed the user's in-game test in `0.3.3-dev`; Spanish rendering still needs in-game verification. Save/reload persistence for an interview already in progress is not implemented yet, so use a disposable save while testing.
+The current `0.3.5` release adds a one-use interview skip cheat. On November 24, 2026, the user verified immediate entry into Detective with the cheat, then confirmed that applying again without re-entering it required an interview. This focused test used The Sims 4 `1.129.39.1030`; it is not a complete certification of all features on that patch. The previous compatibility baseline is `1.128.90.1030`.
+
+Spanish localization remains bundled. The earlier English application/interview flow, popups, and outcome moodlet passed in-game testing; Spanish rendering still needs in-game verification. Saving/reloading during an interview is not supported: finish interviews before saving and exiting, and back up saves before testing.
+
+## Skip an interview (0.3.5 and later)
+
+For setting up a new save or storytelling, select the Sim in Live Mode, open the cheat console (`Ctrl+Shift+C`), and enter:
+
+```text
+vj.skip_next_interview
+```
+
+Then apply for a supported job normally. That Sim joins immediately without an interview, skill roll, ghost listing, or interview-outcome moodlet. Normal career replacement confirmations and shift/agency selections are preserved. The skip is used only after the Sim actually joins; canceling a picker or confirmation does not use it. Other Sims still need interviews.
+
+Enter `vj.skip_next_interview false` to cancel an unused skip. Repeating the command does not stack skips. Unsupported careers and Noble do not consume it. Finish or cancel an existing interview before arming the cheat. Unused skips last only for the current game session, not across a game restart. `testingcheats true` is not required.
 
 ## Translations
 

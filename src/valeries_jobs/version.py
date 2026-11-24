@@ -1,2 +1,2 @@
 MOD_NAME = "Valerie's Jobs"
-MOD_VERSION = "0.3.4"
+MOD_VERSION = "0.3.5"
